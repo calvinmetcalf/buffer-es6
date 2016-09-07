@@ -39,7 +39,7 @@ export var INSPECT_MAX_BYTES = 50
  */
 Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
   ? global.TYPED_ARRAY_SUPPORT
-  : typedArraySupport()
+  : true
 
 /*
  * Export kMaxLength after typed array support is determined.
@@ -151,19 +151,18 @@ Buffer.from = function (value, encodingOrOffset, length) {
   return from(null, value, encodingOrOffset, length)
 }
 
-// rollup issues
-// if (Buffer.TYPED_ARRAY_SUPPORT) {
-//   Buffer.prototype.__proto__ = Uint8Array.prototype
-//   Buffer.__proto__ = Uint8Array
-//   if (typeof Symbol !== 'undefined' && Symbol.species &&
-//       Buffer[Symbol.species] === Buffer) {
-//     // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-//     Object.defineProperty(Buffer, Symbol.species, {
-//       value: null,
-//       configurable: true
-//     })
-//   }
-// }
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    // Object.defineProperty(Buffer, Symbol.species, {
+    //   value: null,
+    //   configurable: true
+    // })
+  }
+}
 
 function assertSize (size) {
   if (typeof size !== 'number') {
