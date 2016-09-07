@@ -6,15 +6,12 @@
  */
 /* eslint-disable no-proto */
 
-'use strict'
 
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-var isArray = require('isarray')
+import * as base64 from './base64'
+import * as ieee754 from './ieee754'
+import isArray from './isArray'
 
-exports.Buffer = Buffer
-exports.SlowBuffer = SlowBuffer
-exports.INSPECT_MAX_BYTES = 50
+export var INSPECT_MAX_BYTES = 50
 
 /**
  * If `Buffer.TYPED_ARRAY_SUPPORT`:
@@ -47,18 +44,23 @@ Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
 /*
  * Export kMaxLength after typed array support is determined.
  */
-exports.kMaxLength = kMaxLength()
-
+var _kMaxLength = kMaxLength()
+export {_kMaxLength as kMaxLength};
 function typedArraySupport () {
-  try {
-    var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
+  return true;
+  // rollup issues
+  // try {
+  //   var arr = new Uint8Array(1)
+  //   arr.__proto__ = {
+  //     __proto__: Uint8Array.prototype,
+  //     foo: function () { return 42 }
+  //   }
+  //   return arr.foo() === 42 && // typed array instances can be augmented
+  //       typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+  //       arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  // } catch (e) {
+  //   return false
+  // }
 }
 
 function kMaxLength () {
@@ -96,7 +98,7 @@ function createBuffer (that, length) {
  * The `Uint8Array` prototype remains unmodified.
  */
 
-function Buffer (arg, encodingOrOffset, length) {
+export function Buffer (arg, encodingOrOffset, length) {
   if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
     return new Buffer(arg, encodingOrOffset, length)
   }
@@ -149,18 +151,19 @@ Buffer.from = function (value, encodingOrOffset, length) {
   return from(null, value, encodingOrOffset, length)
 }
 
-if (Buffer.TYPED_ARRAY_SUPPORT) {
-  Buffer.prototype.__proto__ = Uint8Array.prototype
-  Buffer.__proto__ = Uint8Array
-  if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) {
-    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-    Object.defineProperty(Buffer, Symbol.species, {
-      value: null,
-      configurable: true
-    })
-  }
-}
+// rollup issues
+// if (Buffer.TYPED_ARRAY_SUPPORT) {
+//   Buffer.prototype.__proto__ = Uint8Array.prototype
+//   Buffer.__proto__ = Uint8Array
+//   if (typeof Symbol !== 'undefined' && Symbol.species &&
+//       Buffer[Symbol.species] === Buffer) {
+//     // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+//     Object.defineProperty(Buffer, Symbol.species, {
+//       value: null,
+//       configurable: true
+//     })
+//   }
+// }
 
 function assertSize (size) {
   if (typeof size !== 'number') {
@@ -282,7 +285,7 @@ function fromArrayBuffer (that, array, byteOffset, length) {
 }
 
 function fromObject (that, obj) {
-  if (Buffer.isBuffer(obj)) {
+  if (internalIsBuffer(obj)) {
     var len = checked(obj.length) | 0
     that = createBuffer(that, len)
 
@@ -321,19 +324,19 @@ function checked (length) {
   return length | 0
 }
 
-function SlowBuffer (length) {
+export function SlowBuffer (length) {
   if (+length != length) { // eslint-disable-line eqeqeq
     length = 0
   }
   return Buffer.alloc(+length)
 }
-
-Buffer.isBuffer = function isBuffer (b) {
+Buffer.isBuffer = isBuffer;
+function internalIsBuffer (b) {
   return !!(b != null && b._isBuffer)
 }
 
 Buffer.compare = function compare (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+  if (!internalIsBuffer(a) || !internalIsBuffer(b)) {
     throw new TypeError('Arguments must be Buffers')
   }
 
@@ -395,7 +398,7 @@ Buffer.concat = function concat (list, length) {
   var pos = 0
   for (i = 0; i < list.length; ++i) {
     var buf = list[i]
-    if (!Buffer.isBuffer(buf)) {
+    if (!internalIsBuffer(buf)) {
       throw new TypeError('"list" argument must be an Array of Buffers')
     }
     buf.copy(buffer, pos)
@@ -405,7 +408,7 @@ Buffer.concat = function concat (list, length) {
 }
 
 function byteLength (string, encoding) {
-  if (Buffer.isBuffer(string)) {
+  if (internalIsBuffer(string)) {
     return string.length
   }
   if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
@@ -574,14 +577,14 @@ Buffer.prototype.toString = function toString () {
 }
 
 Buffer.prototype.equals = function equals (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (!internalIsBuffer(b)) throw new TypeError('Argument must be a Buffer')
   if (this === b) return true
   return Buffer.compare(this, b) === 0
 }
 
 Buffer.prototype.inspect = function inspect () {
   var str = ''
-  var max = exports.INSPECT_MAX_BYTES
+  var max = INSPECT_MAX_BYTES
   if (this.length > 0) {
     str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
     if (this.length > max) str += ' ... '
@@ -590,7 +593,7 @@ Buffer.prototype.inspect = function inspect () {
 }
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-  if (!Buffer.isBuffer(target)) {
+  if (!internalIsBuffer(target)) {
     throw new TypeError('Argument must be a Buffer')
   }
 
@@ -692,7 +695,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
   }
 
   // Finally, search either indexOf (if dir is true) or lastIndexOf
-  if (Buffer.isBuffer(val)) {
+  if (internalIsBuffer(val)) {
     // Special case: looking for empty string/buffer always fails
     if (val.length === 0) {
       return -1
@@ -1255,7 +1258,7 @@ Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
 }
 
 function checkInt (buf, value, offset, ext, max, min) {
-  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (!internalIsBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
   if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
   if (offset + ext > buf.length) throw new RangeError('Index out of range')
 }
@@ -1628,7 +1631,7 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
       this[i] = val
     }
   } else {
-    var bytes = Buffer.isBuffer(val)
+    var bytes = internalIsBuffer(val)
       ? val
       : utf8ToBytes(new Buffer(val, encoding).toString())
     var len = bytes.length
@@ -1772,6 +1775,7 @@ function utf16leToBytes (str, units) {
   return byteArray
 }
 
+
 function base64ToBytes (str) {
   return base64.toByteArray(base64clean(str))
 }
@@ -1786,4 +1790,21 @@ function blitBuffer (src, dst, offset, length) {
 
 function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
+}
+
+
+// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+export function isBuffer(obj) {
+  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
+}
+
+function isFastBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
 }

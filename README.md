@@ -1,16 +1,13 @@
-# buffer [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][npm-url]
+# buffer-es6
 
-#### The buffer module from [node.js](https://nodejs.org/), for the browser.
+#### The buffer module from Browserify, rewritten in es6 for rollup
 
-[![saucelabs][saucelabs-image]][saucelabs-url]
+this is an ES6 rewrite of buffer for use with rollup and includes it's dependencies ieee754 and base64-js, the ieee754 license is included in the license file but the base64-js is just MIT with no author listed.
 
-[travis-image]: https://img.shields.io/travis/feross/buffer/master.svg
-[travis-url]: https://travis-ci.org/feross/buffer
-[npm-image]: https://img.shields.io/npm/v/buffer.svg
-[npm-url]: https://npmjs.org/package/buffer
-[downloads-image]: https://img.shields.io/npm/dm/buffer.svg
-[saucelabs-image]: https://saucelabs.com/browser-matrix/buffer.svg
-[saucelabs-url]: https://saucelabs.com/u/buffer
+almost totally the same as the node one but some of the compatibility stuff is turned off as they prevent rollup from treeshaking it.
+
+# actual readme from buffer
+
 
 With [browserify](http://browserify.org), simply `require('buffer')` or use the `Buffer` global and you will get this module.
 
