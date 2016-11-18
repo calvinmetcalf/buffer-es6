@@ -25,6 +25,7 @@
   ],
   "license": "MIT",
   "main": "index.js",
+  "module": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/calvinmetcalf/buffer-es6.git"
