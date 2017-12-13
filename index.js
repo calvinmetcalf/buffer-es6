@@ -37,7 +37,7 @@ export var INSPECT_MAX_BYTES = 50
  * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
  * get the Object implementation, which is slower but behaves correctly.
  */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+Buffer.TYPED_ARRAY_SUPPORT = (typeof global === "object" && global.TYPED_ARRAY_SUPPORT !== undefined)
   ? global.TYPED_ARRAY_SUPPORT
   : true
 
