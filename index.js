@@ -1025,13 +1025,19 @@ function asciiSlice (buf, start, end) {
 }
 
 function latin1Slice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
+  var newBuf = (start || end) ? buf.slice(start, end) : buf
+  var arrayString = []
+  var bufLength = newBuf.length
+  var chunkSize = 1024
 
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i])
+  var i = 0
+  while (i < bufLength) {
+    var sizeLeft = bufLength - i
+    arrayString.push(String.fromCharCode.apply(null, newBuf.slice(i, sizeLeft > chunkSize ? i + chunkSize : i + sizeLeft + 1)))
+    i += 1024
   }
-  return ret
+
+  return arrayString.join('')
 }
 
 function hexSlice (buf, start, end) {
