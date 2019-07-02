@@ -1,5 +1,7 @@
 var benchmark = require('benchmark')
 
+window.Benchmark = benchmark
+
 exports.suite = function () {
   var suite = new benchmark.Suite()
   process.nextTick(function () {
