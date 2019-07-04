@@ -1,17 +1,25 @@
+/* eslint-env mocha */
+
 if (process.env.OBJECT_IMPL) global.TYPED_ARRAY_SUPPORT = false
-var B = require('../').Buffer
-var test = require('tape')
 
-test('Buffer.isEncoding', function (t) {
-  t.equal(B.isEncoding('HEX'), true)
-  t.equal(B.isEncoding('hex'), true)
-  t.equal(B.isEncoding('bad'), false)
-  t.end()
-})
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-test('Buffer.isBuffer', function (t) {
-  t.equal(B.isBuffer(new B('hey', 'utf8')), true)
-  t.equal(B.isBuffer(new B([1, 2, 3], 'utf8')), true)
-  t.equal(B.isBuffer('hey'), false)
-  t.end()
+import { Buffer as B } from '../'
+
+chai.use(chaiAsPromised)
+const { assert } = chai
+
+describe('static', function () {
+  it('Buffer.isEncoding', function () {
+    assert.strictEqual(B.isEncoding('HEX'), true)
+    assert.strictEqual(B.isEncoding('hex'), true)
+    assert.strictEqual(B.isEncoding('bad'), false)
+  })
+
+  it('Buffer.isBuffer', function () {
+    assert.strictEqual(B.isBuffer(new B('hey', 'utf8')), true)
+    assert.strictEqual(B.isBuffer(new B([1, 2, 3], 'utf8')), true)
+    assert.strictEqual(B.isBuffer('hey'), false)
+  })
 })

@@ -31,13 +31,20 @@
     "url": "git://github.com/calvinmetcalf/buffer-es6.git"
   },
   "scripts": {
-    "perf": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug perf/index.js > perf/bundle.js"
+    "perf": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug perf/index.js > perf/bundle.js",
+    "pretest": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug test/index.js > test/bundle.js",
+    "test": "mocha ./test/bundle.js"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babelify": "^10.0.0",
     "benchmark": "^2.1.4",
-    "browserify": "^16.2.3"
+    "browserify": "^16.2.3",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "is-buffer": "^2.0.3",
+    "is-nan": "^1.2.1",
+    "mocha": "^6.1.4"
   }
 }

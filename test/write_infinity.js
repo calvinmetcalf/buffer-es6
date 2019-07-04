@@ -1,45 +1,49 @@
+/* eslint-env mocha */
+
 if (process.env.OBJECT_IMPL) global.TYPED_ARRAY_SUPPORT = false
-var B = require('../').Buffer
-var test = require('tape')
 
-test('write/read Infinity as a float', function (t) {
-  var buf = new B(4)
-  t.equal(buf.writeFloatBE(Infinity, 0), 4)
-  t.equal(buf.readFloatBE(0), Infinity)
-  t.end()
-})
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-test('write/read -Infinity as a float', function (t) {
-  var buf = new B(4)
-  t.equal(buf.writeFloatBE(-Infinity, 0), 4)
-  t.equal(buf.readFloatBE(0), -Infinity)
-  t.end()
-})
+import { Buffer as B } from '../'
 
-test('write/read Infinity as a double', function (t) {
-  var buf = new B(8)
-  t.equal(buf.writeDoubleBE(Infinity, 0), 8)
-  t.equal(buf.readDoubleBE(0), Infinity)
-  t.end()
-})
+chai.use(chaiAsPromised)
+const { assert, expect } = chai
 
-test('write/read -Infinity as a double', function (t) {
-  var buf = new B(8)
-  t.equal(buf.writeDoubleBE(-Infinity, 0), 8)
-  t.equal(buf.readDoubleBE(0), -Infinity)
-  t.end()
-})
+describe('write infinity', function () {
+  it('write/read Infinity as a float', function () {
+    const buf = new B(4)
+    assert.strictEqual(buf.writeFloatBE(Infinity, 0), 4)
+    assert.strictEqual(buf.readFloatBE(0), Infinity)
+  })
 
-test('write/read float greater than max', function (t) {
-  var buf = new B(4)
-  t.equal(buf.writeFloatBE(4e38, 0), 4)
-  t.equal(buf.readFloatBE(0), Infinity)
-  t.end()
-})
+  it('write/read -Infinity as a float', function () {
+    const buf = new B(4)
+    assert.strictEqual(buf.writeFloatBE(-Infinity, 0), 4)
+    assert.strictEqual(buf.readFloatBE(0), -Infinity)
+  })
 
-test('write/read float less than min', function (t) {
-  var buf = new B(4)
-  t.equal(buf.writeFloatBE(-4e40, 0), 4)
-  t.equal(buf.readFloatBE(0), -Infinity)
-  t.end()
+  it('write/read Infinity as a double', function () {
+    const buf = new B(8)
+    assert.strictEqual(buf.writeDoubleBE(Infinity, 0), 8)
+    assert.strictEqual(buf.readDoubleBE(0), Infinity)
+  })
+
+  it('write/read -Infinity as a double', function () {
+    const buf = new B(8)
+    assert.strictEqual(buf.writeDoubleBE(-Infinity, 0), 8)
+    assert.strictEqual(buf.readDoubleBE(0), -Infinity)
+  })
+
+  it('write/read float greater than max', function () {
+    const buf = new B(4)
+    assert.strictEqual(buf.writeFloatBE(4e38, 0), 4)
+    assert.strictEqual(buf.readFloatBE(0), Infinity)
+  })
+
+  it('write/read float less than min', function () {
+    const buf = new B(4)
+    assert.strictEqual(buf.writeFloatBE(-4e40, 0), 4)
+    assert.strictEqual(buf.readFloatBE(0), -Infinity)
+  })
 })
