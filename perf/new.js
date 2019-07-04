@@ -1,18 +1,18 @@
-var BrowserBuffer = require('../').Buffer // (this module)
-var util = require('./util')
-var suite = util.suite()
+import { Buffer as BrowserBuffer } from '../' // (this module)
 
-var LENGTH = 16
+const LENGTH = 16
 
-suite
-  .add('BrowserBuffer#new(' + LENGTH + ')', function () {
-    var buf = new BrowserBuffer(LENGTH)
-  })
-  .add('Uint8Array#new(' + LENGTH + ')', function () {
-    var buf = new Uint8Array(LENGTH)
-  })
+export default (suite) => {
+  suite
+    .add('BrowserBuffer#new(' + LENGTH + ')', function () {
+      const buf = new BrowserBuffer(LENGTH)
+    })
+    .add('Uint8Array#new(' + LENGTH + ')', function () {
+      const buf = new Uint8Array(LENGTH)
+    })
 
-if (!process.browser) suite
-  .add('NodeBuffer#new(' + LENGTH + ')', function () {
-    var buf = new Buffer(LENGTH)
-  })
+  if (!process.browser) suite
+    .add('NodeBuffer#new(' + LENGTH + ')', function () {
+      const buf = new Buffer(LENGTH)
+    })
+}
