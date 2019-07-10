@@ -29,5 +29,15 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/calvinmetcalf/buffer-es6.git"
+  },
+  "scripts": {
+    "perf": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug perf/index.js > perf/bundle.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babelify": "^10.0.0",
+    "benchmark": "^2.1.4",
+    "browserify": "^16.2.3"
   }
 }

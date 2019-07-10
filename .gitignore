@@ -1,1 +1,4 @@
 .zuul.yml
+node_modules/
+perf/bundle.js
+.idea/

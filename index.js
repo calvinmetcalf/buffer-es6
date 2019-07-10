@@ -1026,11 +1026,16 @@ function asciiSlice (buf, start, end) {
 
 function latin1Slice (buf, start, end) {
   var ret = ''
-  end = Math.min(buf.length, end)
+  var bufLength = buf.length - end
+  var chunkSize = 1024
 
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i])
+  var i = start
+  while (i < bufLength) {
+    var sizeLeft = bufLength - i
+    ret += String.fromCharCode.apply(null, buf.slice(i, sizeLeft > chunkSize ? i + chunkSize : i + sizeLeft ))
+    i += 1024
   }
+
   return ret
 }
 
