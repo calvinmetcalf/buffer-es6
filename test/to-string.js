@@ -95,6 +95,14 @@ describe('to-string', function () {
     )
   })
 
+  it('hex buffer to binary with start and end', function () {
+    assert.strictEqual(
+      new B('31323334353621402324255e', 'hex').toString('binary', 1, 5),
+      '2345'
+    )
+  })
+
+
   it('utf8 to binary', function () {
     /* jshint -W100 */
     assert.strictEqual(
