@@ -341,19 +341,16 @@ First, install the project:
 
 Then, to run tests in Node.js, run:
 
-    npm run test-node
+    npm run test
 
 To test locally in a browser, you can run:
 
-    npm run test-browser-local
+    npm run pretest
 
-This will print out a URL that you can then open in a browser to run the tests, using [Zuul](https://github.com/defunctzombie/zuul).
+Then open test.html in a browser to run the tests.
 
-To run automated browser tests using Saucelabs, ensure that your `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY` environment variables are set, then run:
+To run performances tests, run `npm run pretest`, then open perf.html in a browser (you should open the console before ;-)
 
-    npm test
-
-This is what's run in Travis, to check against various browsers. The list of browsers is kept in the `.zuul.yml` file.
 
 ## JavaScript Standard Style
 
