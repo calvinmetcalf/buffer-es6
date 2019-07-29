@@ -1,26 +1,26 @@
-var BrowserBuffer = require('../').Buffer // (this module)
-var util = require('./util')
-var suite = util.suite()
+import { Buffer as BrowserBuffer } from '../' // (this module)
 
-var LENGTH = 9
-var singleByte = 'abcdefghi'
-var multiByte = '\u0610' + '\u6100' + '\uD944\uDC00'
+const LENGTH = 9
+const singleByte = 'abcdefghi'
+const multiByte = '\u0610' + '\u6100' + '\uD944\uDC00'
 
-var browserBuffer = new BrowserBuffer(LENGTH)
-var nodeBuffer = new Buffer(LENGTH)
+const browserBuffer = new BrowserBuffer(LENGTH)
+const nodeBuffer = new Buffer(LENGTH)
 
-suite
-  .add('BrowserBuffer#singleByte', function () {
-    browserBuffer.write(singleByte)
-  })
-  .add('BrowserBuffer#multiByte', function () {
-    browserBuffer.write(multiByte)
-  })
+export default (suite) => {
+  suite
+    .add('BrowserBuffer#singleByte', function () {
+      browserBuffer.write(singleByte)
+    })
+    .add('BrowserBuffer#multiByte', function () {
+      browserBuffer.write(multiByte)
+    })
 
-if (!process.browser) suite
-  .add('NodeBuffer#singleByte', function () {
-    nodeBuffer.write(singleByte)
-  })
-  .add('NodeBuffer#multiByte', function () {
-    nodeBuffer.write(multiByte)
-  })
+  if (!process.browser) suite
+    .add('NodeBuffer#singleByte', function () {
+      nodeBuffer.write(singleByte)
+    })
+    .add('NodeBuffer#multiByte', function () {
+      nodeBuffer.write(multiByte)
+    })
+}

@@ -1,127 +1,124 @@
+/* eslint-env mocha */
+
 if (process.env.OBJECT_IMPL) global.TYPED_ARRAY_SUPPORT = false
-var B = require('../').Buffer
-var test = require('tape')
 
-test('buffer.toJSON', function (t) {
-  var data = [1, 2, 3, 4]
-  t.deepEqual(
-    new B(data).toJSON(),
-    { type: 'Buffer', data: [ 1, 2, 3, 4 ] }
-  )
-  t.end()
-})
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-test('buffer.copy', function (t) {
-  // copied from nodejs.org example
-  var buf1 = new B(26)
-  var buf2 = new B(26)
+import { Buffer as B } from '../'
 
-  for (var i = 0; i < 26; i++) {
-    buf1[i] = i + 97 // 97 is ASCII a
-    buf2[i] = 33 // ASCII !
-  }
+chai.use(chaiAsPromised)
+const { assert } = chai
 
-  buf1.copy(buf2, 8, 16, 20)
+describe('methods', function () {
+  it('buffer.toJSON', function () {
+    const data = [1, 2, 3, 4]
+    assert.deepEqual(
+      new B(data).toJSON(),
+      { type: 'Buffer', data: [1, 2, 3, 4] }
+    )
+  })
 
-  t.equal(
-    buf2.toString('ascii', 0, 25),
-    '!!!!!!!!qrst!!!!!!!!!!!!!'
-  )
-  t.end()
-})
+  it('buffer.copy', function () {
+    // copied from nodejs.org example
+    const buf1 = new B(26)
+    const buf2 = new B(26)
 
-test('test offset returns are correct', function (t) {
-  var b = new B(16)
-  t.equal(4, b.writeUInt32LE(0, 0))
-  t.equal(6, b.writeUInt16LE(0, 4))
-  t.equal(7, b.writeUInt8(0, 6))
-  t.equal(8, b.writeInt8(0, 7))
-  t.equal(16, b.writeDoubleLE(0, 8))
-  t.end()
-})
+    for (let i = 0; i < 26; i++) {
+      buf1[i] = i + 97 // 97 is ASCII a
+      buf2[i] = 33 // ASCII !
+    }
 
-test('concat() a varying number of buffers', function (t) {
-  var zero = []
-  var one = [ new B('asdf') ]
-  var long = []
-  for (var i = 0; i < 10; i++) {
-    long.push(new B('asdf'))
-  }
+    buf1.copy(buf2, 8, 16, 20)
 
-  var flatZero = B.concat(zero)
-  var flatOne = B.concat(one)
-  var flatLong = B.concat(long)
-  var flatLongLen = B.concat(long, 40)
+    assert.strictEqual(
+      buf2.toString('ascii', 0, 25),
+      '!!!!!!!!qrst!!!!!!!!!!!!!'
+    )
+  })
 
-  t.equal(flatZero.length, 0)
-  t.equal(flatOne.toString(), 'asdf')
-  t.deepEqual(flatOne, one[0])
-  t.equal(flatLong.toString(), (new Array(10 + 1).join('asdf')))
-  t.equal(flatLongLen.toString(), (new Array(10 + 1).join('asdf')))
-  t.end()
-})
+  it('it offset returns are correct', function () {
+    const b = new B(16)
+    assert.strictEqual(4, b.writeUInt32LE(0, 0))
+    assert.strictEqual(6, b.writeUInt16LE(0, 4))
+    assert.strictEqual(7, b.writeUInt8(0, 6))
+    assert.strictEqual(8, b.writeInt8(0, 7))
+    assert.strictEqual(16, b.writeDoubleLE(0, 8))
+  })
 
-test('fill', function (t) {
-  var b = new B(10)
-  b.fill(2)
-  t.equal(b.toString('hex'), '02020202020202020202')
-  t.end()
-})
+  it('concat() a constying number of buffers', function () {
+    const zero = []
+    const one = [new B('asdf')]
+    const long = []
+    for (let i = 0; i < 10; i++) {
+      long.push(new B('asdf'))
+    }
 
-test('fill (string)', function (t) {
-  var b = new B(10)
-  b.fill('abc')
-  t.equal(b.toString(), 'abcabcabca')
-  b.fill('է')
-  t.equal(b.toString(), 'էէէէէ')
-  t.end()
-})
+    const flatZero = B.concat(zero)
+    const flatOne = B.concat(one)
+    const flatLong = B.concat(long)
+    const flatLongLen = B.concat(long, 40)
 
-test('copy() empty buffer with sourceEnd=0', function (t) {
-  var source = new B([42])
-  var destination = new B([43])
-  source.copy(destination, 0, 0, 0)
-  t.equal(destination.readUInt8(0), 43)
-  t.end()
-})
+    assert.strictEqual(flatZero.length, 0)
+    assert.strictEqual(flatOne.toString(), 'asdf')
+    assert.deepEqual(flatOne, one[0])
+    assert.strictEqual(flatLong.toString(), (new Array(10 + 1).join('asdf')))
+    assert.strictEqual(flatLongLen.toString(), (new Array(10 + 1).join('asdf')))
+  })
 
-test('copy() after slice()', function (t) {
-  var source = new B(200)
-  var dest = new B(200)
-  var expected = new B(200)
-  for (var i = 0; i < 200; i++) {
-    source[i] = i
-    dest[i] = 0
-  }
+  it('fill', function () {
+    const b = new B(10)
+    b.fill(2)
+    assert.strictEqual(b.toString('hex'), '02020202020202020202')
+  })
 
-  source.slice(2).copy(dest)
-  source.copy(expected, 0, 2)
-  t.deepEqual(dest, expected)
-  t.end()
-})
+  it('fill (string)', function () {
+    const b = new B(10)
+    b.fill('abc')
+    assert.strictEqual(b.toString(), 'abcabcabca')
+    b.fill('է')
+    assert.strictEqual(b.toString(), 'էէէէէ')
+  })
 
-test('copy() ascending', function (t) {
-  var b = new B('abcdefghij')
-  b.copy(b, 0, 3, 10)
-  t.equal(b.toString(), 'defghijhij')
-  t.end()
-})
+  it('copy() empty buffer with sourceEnd=0', function () {
+    const source = new B([42])
+    const destination = new B([43])
+    source.copy(destination, 0, 0, 0)
+    assert.strictEqual(destination.readUInt8(0), 43)
+  })
 
-test('copy() descending', function (t) {
-  var b = new B('abcdefghij')
-  b.copy(b, 3, 0, 7)
-  t.equal(b.toString(), 'abcabcdefg')
-  t.end()
-})
+  it('copy() after slice()', function () {
+    const source = new B(200)
+    const dest = new B(200)
+    const expected = new B(200)
+    for (let i = 0; i < 200; i++) {
+      source[i] = i
+      dest[i] = 0
+    }
 
-test('buffer.slice sets indexes', function (t) {
-  t.equal((new B('hallo')).slice(0, 5).toString(), 'hallo')
-  t.end()
-})
+    source.slice(2).copy(dest)
+    source.copy(expected, 0, 2)
+    assert.deepEqual(dest, expected)
+  })
 
-test('buffer.slice out of range', function (t) {
-  t.plan(2)
-  t.equal((new B('hallo')).slice(0, 10).toString(), 'hallo')
-  t.equal((new B('hallo')).slice(10, 2).toString(), '')
-  t.end()
+  it('copy() ascending', function () {
+    const b = new B('abcdefghij')
+    b.copy(b, 0, 3, 10)
+    assert.strictEqual(b.toString(), 'defghijhij')
+  })
+
+  it('copy() descending', function () {
+    const b = new B('abcdefghij')
+    b.copy(b, 3, 0, 7)
+    assert.strictEqual(b.toString(), 'abcabcdefg')
+  })
+
+  it('buffer.slice sets indexes', function () {
+    assert.strictEqual((new B('hallo')).slice(0, 5).toString(), 'hallo')
+  })
+
+  it('buffer.slice out of range', function () {
+    assert.strictEqual((new B('hallo')).slice(0, 10).toString(), 'hallo')
+    assert.strictEqual((new B('hallo')).slice(10, 2).toString(), '')
+  })
 })

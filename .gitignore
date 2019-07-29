@@ -1,1 +1,3 @@
-.zuul.yml
+node_modules/
+.idea/
+build/

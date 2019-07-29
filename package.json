@@ -1,7 +1,7 @@
 {
   "name": "buffer-es6",
   "description": "Node.js Buffer API, for the browser",
-  "version": "4.9.2",
+  "version": "4.9.3",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
@@ -25,8 +25,27 @@
   ],
   "license": "MIT",
   "main": "index.js",
+  "module": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/calvinmetcalf/buffer-es6.git"
+  },
+  "scripts": {
+    "build-perf-test": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug -e perf/index.js -o build/bundle-perf.js",
+    "build-test": "browserify -t [ babelify --presets [ @babel/preset-env ] ] --debug -e test/index.js -o build/bundle.js",
+    "pretest": "npm run build-test && npm run build-perf-test",
+    "test": "mocha ./build/bundle.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babelify": "^10.0.0",
+    "benchmark": "^2.1.4",
+    "browserify": "^16.2.3",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "is-buffer": "^2.0.3",
+    "is-nan": "^1.2.1",
+    "mocha": "^6.2.0"
   }
 }

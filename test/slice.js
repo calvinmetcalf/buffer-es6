@@ -1,37 +1,43 @@
+/* eslint-env mocha */
+
 if (process.env.OBJECT_IMPL) global.TYPED_ARRAY_SUPPORT = false
-var B = require('../').Buffer
-var test = require('tape')
 
-test('modifying buffer created by .slice() modifies original memory', function (t) {
-  if (!B.TYPED_ARRAY_SUPPORT) return t.end()
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-  var buf1 = new B(26)
-  for (var i = 0; i < 26; i++) {
-    buf1[i] = i + 97 // 97 is ASCII a
-  }
+import { Buffer as B } from '../'
 
-  var buf2 = buf1.slice(0, 3)
-  t.equal(buf2.toString('ascii', 0, buf2.length), 'abc')
+chai.use(chaiAsPromised)
+const { assert } = chai
 
-  buf2[0] = '!'.charCodeAt(0)
-  t.equal(buf1.toString('ascii', 0, buf2.length), '!bc')
+describe('slice', function () {
+  it('modifying buffer created by .slice() modifies original memory', function () {
+    if (!B.TYPED_ARRAY_SUPPORT) return
 
-  t.end()
-})
+    const buf1 = new B(26)
+    for (let i = 0; i < 26; i++) {
+      buf1[i] = i + 97 // 97 is ASCII a
+    }
 
-test('modifying parent buffer modifies .slice() buffer\'s memory', function (t) {
-  if (!B.TYPED_ARRAY_SUPPORT) return t.end()
+    const buf2 = buf1.slice(0, 3)
+    assert.strictEqual(buf2.toString('ascii', 0, buf2.length), 'abc')
 
-  var buf1 = new B(26)
-  for (var i = 0; i < 26; i++) {
-    buf1[i] = i + 97 // 97 is ASCII a
-  }
+    buf2[0] = '!'.charCodeAt(0)
+    assert.strictEqual(buf1.toString('ascii', 0, buf2.length), '!bc')
+  })
 
-  var buf2 = buf1.slice(0, 3)
-  t.equal(buf2.toString('ascii', 0, buf2.length), 'abc')
+  it('modifying parent buffer modifies .slice() buffer\'s memory', function () {
+    if (!B.TYPED_ARRAY_SUPPORT) return
 
-  buf1[0] = '!'.charCodeAt(0)
-  t.equal(buf2.toString('ascii', 0, buf2.length), '!bc')
+    const buf1 = new B(26)
+    for (let i = 0; i < 26; i++) {
+      buf1[i] = i + 97 // 97 is ASCII a
+    }
 
-  t.end()
+    const buf2 = buf1.slice(0, 3)
+    assert.strictEqual(buf2.toString('ascii', 0, buf2.length), 'abc')
+
+    buf1[0] = '!'.charCodeAt(0)
+    assert.strictEqual(buf2.toString('ascii', 0, buf2.length), '!bc')
+  })
 })
