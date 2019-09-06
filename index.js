@@ -331,7 +331,7 @@ export function SlowBuffer (length) {
 }
 Buffer.isBuffer = isBuffer;
 function internalIsBuffer (b) {
-  return !!(b != null && b._isBuffer)
+  return isBuffer(b)
 }
 
 Buffer.compare = function compare (a, b) {
