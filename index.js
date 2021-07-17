@@ -7,9 +7,9 @@
 /* eslint-disable no-proto */
 
 
-import * as base64 from './base64'
-import * as ieee754 from './ieee754'
-import isArray from './isArray'
+import * as base64 from './base64.js'
+import * as ieee754 from './ieee754.js'
+import isArray from './isArray.js'
 
 export var INSPECT_MAX_BYTES = 50
 
@@ -37,8 +37,8 @@ export var INSPECT_MAX_BYTES = 50
  * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
  * get the Object implementation, which is slower but behaves correctly.
  */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-  ? global.TYPED_ARRAY_SUPPORT
+Buffer.TYPED_ARRAY_SUPPORT = (typeof process === 'object' ? global : window).TYPED_ARRAY_SUPPORT !== undefined
+  ? (typeof process === 'object' ? global : window).TYPED_ARRAY_SUPPORT
   : true
 
 /*
